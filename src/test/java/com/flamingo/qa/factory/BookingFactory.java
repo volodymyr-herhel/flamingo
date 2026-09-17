@@ -21,7 +21,7 @@ public final class BookingFactory {
                         .checkin(RandomDataUtils.futureDate(1))
                         .checkout(RandomDataUtils.futureDate(5))
                         .build())
-                .additionalneeds(AdditionalNeeds.BREAKFAST.getValue())
+                .additionalneeds(RandomDataUtils.randomEnumValue(AdditionalNeeds.class).getValue())
                 .build();
     }
 }

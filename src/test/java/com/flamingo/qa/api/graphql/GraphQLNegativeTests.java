@@ -24,6 +24,7 @@ class GraphQLNegativeTests {
     void queryWithUnknownField() {
         Response response = GraphQLClient.execute(GraphQLQueries.UNKNOWN_FIELD_QUERY);
 
+        response.then().statusCode(400);
         List<Map<String, Object>> errors = response.jsonPath().getList("errors");
         assertThat(errors).isNotEmpty();
     }
@@ -33,6 +34,7 @@ class GraphQLNegativeTests {
     void queryWithMalformedSyntax() {
         Response response = GraphQLClient.execute(GraphQLQueries.MALFORMED_SYNTAX_QUERY);
 
+        response.then().statusCode(400);
         List<Map<String, Object>> errors = response.jsonPath().getList("errors");
         assertThat(errors).isNotEmpty();
     }

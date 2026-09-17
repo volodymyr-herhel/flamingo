@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -79,7 +81,7 @@ class WebTablesTests {
     @DisplayName("TC-UI-TABLE-N01: Clicking a column header does not reorder rows (no sort support in this build)")
     void clickingColumnHeaderDoesNotReorderRows(Page page) {
         WebTablesPage webTables = new WebTablesPage(page).open();
-        var originalOrder = webTables.visibleFirstNames();
+        List<String> originalOrder = webTables.visibleFirstNames();
 
         webTables.clickColumnHeader("First Name");
 
