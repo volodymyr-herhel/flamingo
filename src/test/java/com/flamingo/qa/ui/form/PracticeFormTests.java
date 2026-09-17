@@ -32,6 +32,7 @@ class PracticeFormTests {
             DateTimeFormatter.ofPattern("d MMMM,yyyy", Locale.ENGLISH);
 
     @Test
+    @Tag("smoke")
     @DisplayName("TC-UI-FORM-001: Submitting a fully filled form shows the correct data in the success modal")
     void submitFullyFilledFormShowsMatchingSummary(Page page) {
         StudentDetails student = StudentDetailsFactory.randomStudent();

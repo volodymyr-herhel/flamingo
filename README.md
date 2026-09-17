@@ -30,6 +30,9 @@ mvn test -Dgroups="api"
 # Run only UI tests
 mvn test -Dgroups="ui"
 
+# Run only the UI smoke subset (one fast happy-path test per feature)
+mvn test -Dgroups="smoke"
+
 # Run UI tests headed (visible browser) instead of the default headless
 mvn test -Dgroups="ui" -Dplaywright.headless=false
 

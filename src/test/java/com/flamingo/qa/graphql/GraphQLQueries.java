@@ -1,5 +1,7 @@
 package com.flamingo.qa.graphql;
 
+import java.util.Map;
+
 /** Reusable GraphQL query strings for the Hygraph "Video Streaming" example schema. */
 public final class GraphQLQueries {
 
@@ -47,15 +49,18 @@ public final class GraphQLQueries {
             }
             """;
 
-    public static String movieById(String id) {
-        return """
-                query {
-                  movie(where: { id: "%s" }) {
-                    id
-                    title
-                  }
-                }
-                """.formatted(id);
+    /** Uses a declared GraphQL variable (${@code $id}) rather than string interpolation. */
+    public static final String MOVIE_BY_ID = """
+            query MovieById($id: ID!) {
+              movie(where: { id: $id }) {
+                id
+                title
+              }
+            }
+            """;
+
+    public static Map<String, Object> movieByIdVariables(String id) {
+        return Map.of("id", id);
     }
 
     public static final String UNKNOWN_FIELD_QUERY = """
@@ -73,5 +78,5 @@ public final class GraphQLQueries {
                 title
             """;
 
-    public static final String MOVIE_BY_NON_EXISTENT_ID_QUERY = movieById("does-not-exist-000000");
+    public static final String NON_EXISTENT_MOVIE_ID = "does-not-exist-000000";
 }

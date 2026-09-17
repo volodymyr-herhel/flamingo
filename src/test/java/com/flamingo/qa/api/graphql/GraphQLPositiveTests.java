@@ -31,12 +31,13 @@ class GraphQLPositiveTests {
     }
 
     @Test
-    @DisplayName("TC-GQL-002: Query a single movie by id returns the matching movie")
+    @DisplayName("TC-GQL-002: Query a single movie by id (using GraphQL variables) returns the matching movie")
     void queryMovieById() {
         Response listResponse = GraphQLClient.execute(GraphQLQueries.MOVIES_LIST);
         String firstMovieId = listResponse.jsonPath().getString("data.movies[0].id");
 
-        Response response = GraphQLClient.execute(GraphQLQueries.movieById(firstMovieId));
+        Response response = GraphQLClient.execute(GraphQLQueries.MOVIE_BY_ID,
+                GraphQLQueries.movieByIdVariables(firstMovieId));
 
         response.then().statusCode(200);
         assertThat(response.jsonPath().getString("data.movie.id")).isEqualTo(firstMovieId);

@@ -7,20 +7,22 @@ import com.flamingo.qa.ui.support.PlaywrightExtension;
 import com.microsoft.playwright.Page;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * DemoQA "Web Tables" (Option B) - https://demoqa.com/webtables. Unlike the API booking tests,
- * no {@code @AfterEach} cleanup is needed here: each test gets a fresh browser context (via
- * {@link PlaywrightExtension}), and Web Tables data only lives in that page's in-memory React
- * state - it's discarded once the context closes, not persisted server-side.
+ * DemoQA "Web Tables" (Option B) - https://demoqa.com/webtables. Each test gets a fresh browser
+ * context (via {@link PlaywrightExtension}), so tests never see rows added by another test; any
+ * record a test itself adds is additionally deleted in {@link #cleanUpCreatedRecords()} (runs
+ * before the context closes) as defensive cleanup, kept consistent with the API tests' pattern.
  */
 @Tag("ui")
 @Epic("DemoQA")
@@ -28,13 +30,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(PlaywrightExtension.class)
 class WebTablesTests {
 
+    private final List<String> createdEmails = new ArrayList<>();
+    private WebTablesPage webTables;
+
+    @AfterEach
+    void cleanUpCreatedRecords() {
+        if (webTables == null) {
+            return;
+        }
+        createdEmails.forEach(email -> {
+            if (webTables.isRecordPresent(email)) {
+                webTables.delete(email);
+            }
+        });
+    }
+
     @Test
+    @Tag("smoke")
     @DisplayName("TC-UI-TABLE-001: Adding a new record shows it in the table")
     void addNewRecordShowsItInTable(Page page) {
         PersonRecord person = PersonRecordFactory.randomPerson();
-        WebTablesPage webTables = new WebTablesPage(page).open();
+        webTables = new WebTablesPage(page).open();
 
         webTables.clickAdd().fill(person).submit();
+        createdEmails.add(person.getEmail());
 
         assertThat(webTables.isRecordPresent(person.getEmail())).isTrue();
     }
@@ -43,11 +62,12 @@ class WebTablesTests {
     @DisplayName("TC-UI-TABLE-002: Editing an existing record updates its values in the table")
     void editRecordUpdatesItsValues(Page page) {
         PersonRecord person = PersonRecordFactory.randomPerson();
-        WebTablesPage webTables = new WebTablesPage(page).open();
+        webTables = new WebTablesPage(page).open();
         webTables.clickAdd().fill(person).submit();
 
         PersonRecord updated = person.toBuilder().department("Engineering").build();
         webTables.clickEdit(person.getEmail()).fill(updated).submit();
+        createdEmails.add(updated.getEmail());
 
         assertThat(webTables.isRecordPresent(updated.getEmail())).isTrue();
     }
@@ -56,7 +76,7 @@ class WebTablesTests {
     @DisplayName("TC-UI-TABLE-003: Deleting a record removes it from the table")
     void deleteRecordRemovesItFromTable(Page page) {
         PersonRecord person = PersonRecordFactory.randomPerson();
-        WebTablesPage webTables = new WebTablesPage(page).open();
+        webTables = new WebTablesPage(page).open();
         webTables.clickAdd().fill(person).submit();
         assertThat(webTables.isRecordPresent(person.getEmail())).isTrue();
 
@@ -69,8 +89,9 @@ class WebTablesTests {
     @DisplayName("TC-UI-TABLE-004: Searching filters the table to only matching records")
     void searchFiltersTableToMatchingRecords(Page page) {
         PersonRecord person = PersonRecordFactory.randomPerson();
-        WebTablesPage webTables = new WebTablesPage(page).open();
+        webTables = new WebTablesPage(page).open();
         webTables.clickAdd().fill(person).submit();
+        createdEmails.add(person.getEmail());
 
         webTables.search(person.getEmail());
 
@@ -80,7 +101,7 @@ class WebTablesTests {
     @Test
     @DisplayName("TC-UI-TABLE-N01: Clicking a column header does not reorder rows (no sort support in this build)")
     void clickingColumnHeaderDoesNotReorderRows(Page page) {
-        WebTablesPage webTables = new WebTablesPage(page).open();
+        webTables = new WebTablesPage(page).open();
         List<String> originalOrder = webTables.visibleFirstNames();
 
         webTables.clickColumnHeader("First Name");

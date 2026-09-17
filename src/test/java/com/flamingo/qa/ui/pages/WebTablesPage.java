@@ -10,6 +10,10 @@ import java.util.List;
 /** Page object for https://demoqa.com/webtables. */
 public class WebTablesPage extends BasePage {
 
+    private final Locator addNewRecordButton = byId("addNewRecordButton");
+    private final Locator searchBox = byId("searchBox");
+    private final Locator firstNameCells = page.locator("table tbody tr td:first-child");
+
     public WebTablesPage(Page page) {
         super(page);
     }
@@ -23,24 +27,24 @@ public class WebTablesPage extends BasePage {
 
     @Step("Click Add")
     public RegistrationFormModal clickAdd() {
-        byId("addNewRecordButton").click();
+        addNewRecordButton.click();
         return new RegistrationFormModal(page);
     }
 
     @Step("Edit record with email: {email}")
     public RegistrationFormModal clickEdit(String email) {
-        rowContaining(email).locator("[id^='edit-record-']").click();
+        editIcon(email).click();
         return new RegistrationFormModal(page);
     }
 
     @Step("Delete record with email: {email}")
     public void delete(String email) {
-        rowContaining(email).locator("[id^='delete-record-']").click();
+        deleteIcon(email).click();
     }
 
     @Step("Search for: {query}")
     public WebTablesPage search(String query) {
-        byId("searchBox").fill(query);
+        searchBox.fill(query);
         return this;
     }
 
@@ -49,17 +53,29 @@ public class WebTablesPage extends BasePage {
     }
 
     public List<String> visibleFirstNames() {
-        return page.locator("table tbody tr td:first-child").allTextContents();
+        return firstNameCells.allTextContents();
     }
 
     /** Clicks the given column header; DemoQA's current Web Tables page has no working sort. */
     @Step("Click column header: {columnName}")
     public WebTablesPage clickColumnHeader(String columnName) {
-        withText("table thead th", columnName).click();
+        columnHeader(columnName).click();
         return this;
     }
 
     private Locator rowContaining(String text) {
         return withText("table tbody tr", text);
+    }
+
+    private Locator editIcon(String email) {
+        return rowContaining(email).locator("[id^='edit-record-']");
+    }
+
+    private Locator deleteIcon(String email) {
+        return rowContaining(email).locator("[id^='delete-record-']");
+    }
+
+    private Locator columnHeader(String columnName) {
+        return withText("table thead th", columnName);
     }
 }

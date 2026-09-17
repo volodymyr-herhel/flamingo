@@ -14,6 +14,21 @@ import java.time.LocalDate;
 /** Page object for https://demoqa.com/automation-practice-form. */
 public class PracticeFormPage extends BasePage {
 
+    private static final String STATE_DROPDOWN = "#state";
+    private static final String CITY_DROPDOWN = "#city";
+
+    private final Locator firstNameInput = byId("firstName");
+    private final Locator lastNameInput = byId("lastName");
+    private final Locator emailInput = byId("userEmail");
+    private final Locator mobileNumberInput = byId("userNumber");
+    private final Locator dateOfBirthInput = byId("dateOfBirthInput");
+    private final Locator monthSelect = page.locator(".react-datepicker__month-select");
+    private final Locator yearSelect = page.locator(".react-datepicker__year-select");
+    private final Locator subjectsInput = byId("subjectsInput");
+    private final Locator currentAddressInput = byId("currentAddress");
+    private final Locator uploadPictureInput = byId("uploadPicture");
+    private final Locator submitButton = byId("submit");
+
     public PracticeFormPage(Page page) {
         super(page);
     }
@@ -27,48 +42,59 @@ public class PracticeFormPage extends BasePage {
 
     @Step("Fill the student registration form")
     public PracticeFormPage fillStudentDetails(StudentDetails student) {
-        byId("firstName").fill(student.getFirstName());
-        byId("lastName").fill(student.getLastName());
-        byId("userEmail").fill(student.getEmail());
-        byId("gender-radio-" + student.getGender().getRadioIndex()).check();
-        byId("userNumber").fill(student.getMobileNumber());
+        firstNameInput.fill(student.getFirstName());
+        lastNameInput.fill(student.getLastName());
+        emailInput.fill(student.getEmail());
+        genderRadio(student.getGender()).check();
+        mobileNumberInput.fill(student.getMobileNumber());
         setDateOfBirth(student.getDateOfBirth());
         student.getSubjects().forEach(this::addSubject);
-        student.getHobbies().forEach(hobby -> byId("hobbies-checkbox-" + hobby.getCheckboxIndex()).check());
-        byId("currentAddress").fill(student.getCurrentAddress());
-        selectReactSelectOption("#state", student.getState());
-        selectReactSelectOption("#city", student.getCity());
+        student.getHobbies().forEach(hobby -> hobbyCheckbox(hobby).check());
+        currentAddressInput.fill(student.getCurrentAddress());
+        selectReactSelectOption(STATE_DROPDOWN, student.getState());
+        selectReactSelectOption(CITY_DROPDOWN, student.getCity());
         return this;
     }
 
     @Step("Upload a picture")
     public PracticeFormPage uploadPicture(Path filePath) {
-        byId("uploadPicture").setInputFiles(filePath);
+        uploadPictureInput.setInputFiles(filePath);
         return this;
     }
 
     @Step("Set date of birth: {date}")
     public PracticeFormPage setDateOfBirth(LocalDate date) {
-        byId("dateOfBirthInput").click();
-        page.locator(".react-datepicker__month-select").selectOption(String.valueOf(date.getMonthValue() - 1));
-        page.locator(".react-datepicker__year-select").selectOption(String.valueOf(date.getYear()));
-        page.locator(".react-datepicker__day--" + String.format("%03d", date.getDayOfMonth())
-                + ":not(.react-datepicker__day--outside-month)").click();
+        dateOfBirthInput.click();
+        monthSelect.selectOption(String.valueOf(date.getMonthValue() - 1));
+        yearSelect.selectOption(String.valueOf(date.getYear()));
+        dayOption(date).click();
         return this;
     }
 
     @Step("Add subject: {subject}")
     public PracticeFormPage addSubject(String subject) {
-        byId("subjectsInput").fill(subject);
-        byId("subjectsInput").press("Enter");
+        subjectsInput.fill(subject);
+        subjectsInput.press("Enter");
         return this;
     }
 
     @Step("Submit the form")
     public SubmissionModal submit() {
-        Locator submitButton = byId("submit");
         submitButton.scrollIntoViewIfNeeded();
         submitButton.click();
         return new SubmissionModal(page);
+    }
+
+    private Locator genderRadio(Gender gender) {
+        return byId("gender-radio-" + gender.getRadioIndex());
+    }
+
+    private Locator hobbyCheckbox(Hobby hobby) {
+        return byId("hobbies-checkbox-" + hobby.getCheckboxIndex());
+    }
+
+    private Locator dayOption(LocalDate date) {
+        return page.locator(".react-datepicker__day--" + String.format("%03d", date.getDayOfMonth())
+                + ":not(.react-datepicker__day--outside-month)");
     }
 }

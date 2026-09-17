@@ -42,7 +42,8 @@ class GraphQLNegativeTests {
     @Test
     @DisplayName("TC-GQL-N03: Query a movie with a non-existent id returns null data")
     void queryMovieWithNonExistentId() {
-        Response response = GraphQLClient.execute(GraphQLQueries.MOVIE_BY_NON_EXISTENT_ID_QUERY);
+        Response response = GraphQLClient.execute(GraphQLQueries.MOVIE_BY_ID,
+                GraphQLQueries.movieByIdVariables(GraphQLQueries.NON_EXISTENT_MOVIE_ID));
 
         response.then().statusCode(200);
         Object movie = response.jsonPath().get("data.movie");
