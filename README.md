@@ -53,15 +53,15 @@ src/test/java/com/flamingo/qa/
   model/                  # Request/response POJOs (Lombok) + enums
   util/                   # Random test-data generator
 docs/
-  TEST_CASES.md           # Manual test case catalog
-  TRACEABILITY.md         # Manual -> automated test traceability matrix
+  API_TEST_CASES.md      # Manual test case catalog
+  API_TRACEABILITY.md    # Manual -> automated test traceability matrix
 ```
 
 ## Test Strategy
 
 - **Test design first**: every scenario started as a manual test case in
-  [docs/TEST_CASES.md](docs/TEST_CASES.md), then was automated 1:1 — see
-  [docs/TRACEABILITY.md](docs/TRACEABILITY.md).
+  [docs/API_TEST_CASES.md](docs/API_TEST_CASES.md), then was automated 1:1 — see
+  [docs/API_TRACEABILITY.md](docs/API_TRACEABILITY.md).
 - **Layered framework**: test classes never call REST Assured directly; they go through
   `BookerApiClient` / `GraphQLClient`, keeping tests readable and the HTTP details reusable
   (DRY, single responsibility).
@@ -77,7 +77,7 @@ docs/
   negative-scenario suite (invalid auth, non-existent ids, malformed payloads, GraphQL errors).
 - **Reporting**: Allure annotations (`@Epic`/`@Feature`/`@Step`) and descriptive `@DisplayName`s
   (carrying the manual TC id) make the Allure report self-explanatory and traceable back to
-  `docs/TEST_CASES.md`.
+  `docs/API_TEST_CASES.md`.
 
 ## Challenges & Solutions
 

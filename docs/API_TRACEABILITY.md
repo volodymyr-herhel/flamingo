@@ -1,6 +1,6 @@
 # Traceability Matrix
 
-Maps every manual test case in [TEST_CASES.md](TEST_CASES.md) to its automated implementation.
+Maps every manual test case in [API_TEST_CASES.md](API_TEST_CASES.md) to its automated implementation.
 All manual test cases below are automated (status `Automated`).
 
 | TC ID | Automated Test Class | Automated Method | Status |
