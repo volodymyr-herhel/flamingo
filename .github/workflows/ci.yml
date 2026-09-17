@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 jobs:
-  api-tests:
+  tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -26,6 +26,19 @@ jobs:
 
       - name: Run API tests
         run: mvn -B test -Dgroups=api
+        continue-on-error: true
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pom.xml') }}
+
+      - name: Install Playwright browsers
+        run: mvn -B org.codehaus.mojo:exec-maven-plugin:3.1.1:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.classpathScope=test -Dexec.args="install --with-deps chromium"
+
+      - name: Run UI tests
+        run: mvn -B test -Dgroups=ui
         continue-on-error: true
 
       - name: Load previous Allure report (for Trends)
