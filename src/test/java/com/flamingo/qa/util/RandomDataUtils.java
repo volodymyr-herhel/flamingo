@@ -33,7 +33,7 @@ public final class RandomDataUtils {
         return LocalDate.now().plusDays(daysFromNow).format(DateTimeFormatter.ISO_LOCAL_DATE);
     }
 
-    public static String randomSuffix() {
+    private static String randomSuffix() {
         return String.valueOf(ThreadLocalRandom.current().nextInt(1000, 9999));
     }
 }

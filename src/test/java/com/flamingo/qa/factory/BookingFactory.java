@@ -24,17 +24,4 @@ public final class BookingFactory {
                 .additionalneeds(AdditionalNeeds.BREAKFAST.getValue())
                 .build();
     }
-
-    public static Booking randomBookingWithNames(String firstname, String lastname) {
-        Booking booking = randomBooking();
-        booking.setFirstname(firstname);
-        booking.setLastname(lastname);
-        return booking;
-    }
-
-    public static Booking randomBookingWithDates(String checkin, String checkout) {
-        Booking booking = randomBooking();
-        booking.setBookingdates(BookingDates.builder().checkin(checkin).checkout(checkout).build());
-        return booking;
-    }
 }

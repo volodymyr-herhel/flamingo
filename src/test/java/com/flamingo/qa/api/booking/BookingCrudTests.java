@@ -4,6 +4,7 @@ import com.flamingo.qa.client.AuthSession;
 import com.flamingo.qa.client.BookerApiClient;
 import com.flamingo.qa.factory.BookingFactory;
 import com.flamingo.qa.model.booking.Booking;
+import com.flamingo.qa.model.booking.BookingId;
 import com.flamingo.qa.model.booking.CreateBookingResponse;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -74,7 +76,8 @@ class BookingCrudTests {
         Response response = BookerApiClient.getBookingIds(null);
 
         response.then().statusCode(200);
-        assertThat(response.jsonPath().getList("bookingid", Integer.class)).isNotEmpty();
+        List<BookingId> ids = response.jsonPath().getList("", BookingId.class);
+        assertThat(ids).isNotEmpty();
     }
 
     @Test
@@ -101,7 +104,8 @@ class BookingCrudTests {
                 Map.of("firstname", uniqueFirstname, "lastname", sharedBooking.getLastname()));
 
         response.then().statusCode(200);
-        assertThat(response.jsonPath().getList("bookingid", Integer.class)).contains(sharedBookingId);
+        List<BookingId> ids = response.jsonPath().getList("", BookingId.class);
+        assertThat(ids).extracting(BookingId::getBookingid).contains(sharedBookingId);
     }
 
     @Test

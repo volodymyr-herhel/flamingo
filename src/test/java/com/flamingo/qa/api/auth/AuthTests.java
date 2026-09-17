@@ -1,7 +1,8 @@
 package com.flamingo.qa.api.auth;
 
 import com.flamingo.qa.client.BookerApiClient;
-import com.flamingo.qa.model.auth.AuthRequest;
+import com.flamingo.qa.factory.AuthFactory;
+import com.flamingo.qa.model.auth.AuthResponse;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.restassured.response.Response;
@@ -19,23 +20,21 @@ class AuthTests {
     @Test
     @DisplayName("TC-AUTH-001: Successful authentication returns a valid token")
     void createTokenWithValidCredentials() {
-        AuthRequest request = AuthRequest.builder().username("admin").password("password123").build();
-
-        Response response = BookerApiClient.createToken(request);
+        Response response = BookerApiClient.createToken(AuthFactory.validCredentials());
 
         response.then().statusCode(200);
-        assertThat(response.jsonPath().getString("token")).isNotBlank();
+        AuthResponse authResponse = response.as(AuthResponse.class);
+        assertThat(authResponse.getToken()).isNotBlank();
     }
 
     @Test
     @DisplayName("TC-AUTH-002: Authentication with invalid credentials returns no token")
     void createTokenWithInvalidCredentials() {
-        AuthRequest request = AuthRequest.builder().username("admin").password("wrong-password").build();
-
-        Response response = BookerApiClient.createToken(request);
+        Response response = BookerApiClient.createToken(AuthFactory.invalidCredentials());
 
         response.then().statusCode(200);
-        assertThat(response.jsonPath().getString("token")).isNull();
-        assertThat(response.jsonPath().getString("reason")).isEqualTo("Bad credentials");
+        AuthResponse authResponse = response.as(AuthResponse.class);
+        assertThat(authResponse.getToken()).isNull();
+        assertThat(authResponse.getReason()).isEqualTo("Bad credentials");
     }
 }
