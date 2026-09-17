@@ -1,7 +1,6 @@
 package com.flamingo.qa.util;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ThreadLocalRandom;
 
 /** Generates randomized test data so tests don't collide on shared public test data. */
@@ -21,7 +20,7 @@ public final class RandomDataUtils {
         return LAST_NAMES[ThreadLocalRandom.current().nextInt(LAST_NAMES.length)];
     }
 
-    public static int randomPrice() {
+    public static double randomPrice() {
         return ThreadLocalRandom.current().nextInt(50, 1000);
     }
 
@@ -29,8 +28,8 @@ public final class RandomDataUtils {
         return ThreadLocalRandom.current().nextBoolean();
     }
 
-    public static String futureDate(int daysFromNow) {
-        return LocalDate.now().plusDays(daysFromNow).format(DateTimeFormatter.ISO_LOCAL_DATE);
+    public static LocalDate futureDate(int daysFromNow) {
+        return LocalDate.now().plusDays(daysFromNow);
     }
 
     private static String randomSuffix() {

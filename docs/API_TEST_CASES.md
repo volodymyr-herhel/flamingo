@@ -76,6 +76,18 @@ Scope:
 - **Steps:** `GET /booking?firstname=X&lastname=Y`
 - **Expected:** Status `200`; result list contains the booking's id
 
+### TC-BOOK-008: Filter booking ids by checkin/checkout date
+- **Pre:** A booking with known checkin/checkout dates exists
+- **Steps:** `GET /booking?checkin={checkin}&checkout={checkout}` using the booking's own dates
+- **Expected:** Status `200`; response is a well-formed list of `{bookingid}` objects (Restful
+  Booker's date filter is known to be unreliable on the shared demo instance, so this doesn't
+  assert the specific booking is present)
+
+### TC-BOOK-009: Update booking (PUT) with Basic auth
+- **Pre:** A booking exists
+- **Steps:** `PUT /booking/{id}` with a full new payload and `Authorization: Basic <base64(admin:password123)>`
+- **Expected:** Status `200`; all fields reflect the new data
+
 ## Booking Negative Scenarios
 
 ### TC-BOOK-N01: Get booking with a non-existent id

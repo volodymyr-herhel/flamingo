@@ -70,9 +70,9 @@ docs/
 - **Test data**: `BookingFactory` + `RandomDataUtils` generate randomized, unique booking data
   per run (builder pattern via Lombok `@Builder`) so tests don't collide with each other or with
   data left behind by previous runs on the shared public instance.
-- **Respecting the shared public API**: `BookingCrudTests` and `BookingNegativeTests` reuse a
-  single booking created once per class instead of one booking per test, keeping the number of
-  requests against the free public instance to a minimum.
+- **Respecting the shared public API**: every test creates the booking it needs and deletes it
+  in an `@AfterEach`/`@AfterAll` cleanup step, so tests are independent of each other and of
+  execution order, and no test data is left behind on the free public instance.
 - **Positive + negative coverage**: every feature has both a happy-path suite and a dedicated
   negative-scenario suite (invalid auth, non-existent ids, malformed payloads, GraphQL errors).
 - **Reporting**: Allure annotations (`@Epic`/`@Feature`/`@Step`) and descriptive `@DisplayName`s

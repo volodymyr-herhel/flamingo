@@ -1,27 +1,43 @@
 package com.flamingo.qa.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.flamingo.qa.config.Config;
 import com.flamingo.qa.model.auth.AuthRequest;
 import com.flamingo.qa.model.booking.Booking;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
+import io.restassured.config.ObjectMapperConfig;
+import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
 import io.restassured.parsing.Parser;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Map;
 
 /** Thin wrapper around the Restful Booker REST endpoints. */
 public final class BookerApiClient {
 
     // The public API's edge blocks requests without a User-Agent (returns HTTP 418), and some
-    // endpoints reply with a text/plain Content-Type even though the body is JSON.
+    // endpoints reply with a text/plain Content-Type even though the body is JSON. It also
+    // deterministically 418s RestAssured's default multi-value Accept header from .accept(JSON)
+    // ("application/json, application/javascript, text/javascript, text/json") as a bot
+    // signature - baseSpec() below sends a plain "application/json" Accept value instead.
     private static final String USER_AGENT = "Mozilla/5.0 (FlamingoQA-Automation)";
 
     static {
         AllureReportingSupport.ensureRegistered();
         RestAssured.registerParser("text/plain", Parser.JSON);
+        // LocalDate fields (BookingDates) need java.time support to (de)serialize as yyyy-MM-dd.
+        RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
+                ObjectMapperConfig.objectMapperConfig().jackson2ObjectMapperFactory((type, s) ->
+                        new ObjectMapper()
+                                .registerModule(new JavaTimeModule())
+                                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)));
     }
 
     private BookerApiClient() {
@@ -32,7 +48,7 @@ public final class BookerApiClient {
                 .baseUri(Config.BOOKER_BASE_URL)
                 .header("User-Agent", USER_AGENT)
                 .contentType(ContentType.JSON)
-                .accept(ContentType.JSON);
+                .header("Accept", "application/json");
     }
 
     @Step("POST /auth - create token")
@@ -62,10 +78,20 @@ public final class BookerApiClient {
         return RequestRetrySupport.withRetry(() -> baseSpec().body(rawJsonBody).when().post("/booking"));
     }
 
-    @Step("PUT /booking/{bookingId} - update booking")
+    @Step("PUT /booking/{bookingId} - update booking with a valid token")
     public static Response updateBooking(int bookingId, Booking booking, String token) {
         return RequestRetrySupport.withRetry(() -> baseSpec()
                 .header("Cookie", "token=" + token)
+                .body(booking)
+                .when().put("/booking/{id}", bookingId));
+    }
+
+    @Step("PUT /booking/{bookingId} - update booking with Basic auth")
+    public static Response updateBookingWithBasicAuth(int bookingId, Booking booking, String username, String password) {
+        String basicAuth = Base64.getEncoder().encodeToString(
+                (username + ":" + password).getBytes(StandardCharsets.UTF_8));
+        return RequestRetrySupport.withRetry(() -> baseSpec()
+                .header("Authorization", "Basic " + basicAuth)
                 .body(booking)
                 .when().put("/booking/{id}", bookingId));
     }

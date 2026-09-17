@@ -21,6 +21,8 @@ All manual test cases below are automated (status `Automated`).
 - **TC-BOOK-005** → `com.flamingo.qa.api.booking.BookingCrudTests#deleteBookingWithValidToken` — Automated
 - **TC-BOOK-006** → `com.flamingo.qa.api.booking.BookingCrudTests#getBookingIdsWithoutFilters` — Automated
 - **TC-BOOK-007** → `com.flamingo.qa.api.booking.BookingCrudTests#getBookingIdsFilteredByFirstNameAndLastName` — Automated
+- **TC-BOOK-008** → `com.flamingo.qa.api.booking.BookingCrudTests#getBookingIdsFilteredByCheckinAndCheckout` — Automated
+- **TC-BOOK-009** → `com.flamingo.qa.api.booking.BookingCrudTests#updateBookingWithBasicAuth` — Automated
 
 ## Booking Negative Scenarios
 
@@ -43,6 +45,6 @@ All manual test cases below are automated (status `Automated`).
 - **TC-GQL-N02** → `com.flamingo.qa.api.graphql.GraphQLNegativeTests#queryWithMalformedSyntax` — Automated
 - **TC-GQL-N03** → `com.flamingo.qa.api.graphql.GraphQLNegativeTests#queryMovieWithNonExistentId` — Automated
 
-**Coverage summary:** 22 manual test cases, 22 automated (100%). Booking CRUD (7) exceeds the
+**Coverage summary:** 24 manual test cases, 24 automated (100%). Booking CRUD (9) exceeds the
 minimum of 3, GraphQL (8) exceeds the minimum of 5.
 
