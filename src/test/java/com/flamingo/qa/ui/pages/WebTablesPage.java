@@ -55,11 +55,11 @@ public class WebTablesPage extends BasePage {
     /** Clicks the given column header; DemoQA's current Web Tables page has no working sort. */
     @Step("Click column header: {columnName}")
     public WebTablesPage clickColumnHeader(String columnName) {
-        page.locator("table thead th", new Page.LocatorOptions().setHasText(columnName)).click();
+        withText("table thead th", columnName).click();
         return this;
     }
 
     private Locator rowContaining(String text) {
-        return page.locator("table tbody tr", new Page.LocatorOptions().setHasText(text));
+        return withText("table tbody tr", text);
     }
 }

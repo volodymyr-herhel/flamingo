@@ -4,6 +4,7 @@ import com.flamingo.qa.config.Config;
 import com.flamingo.qa.model.ui.Gender;
 import com.flamingo.qa.model.ui.Hobby;
 import com.flamingo.qa.model.ui.StudentDetails;
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import io.qameta.allure.Step;
 
@@ -65,8 +66,9 @@ public class PracticeFormPage extends BasePage {
 
     @Step("Submit the form")
     public SubmissionModal submit() {
-        byId("submit").scrollIntoViewIfNeeded();
-        byId("submit").click();
+        Locator submitButton = byId("submit");
+        submitButton.scrollIntoViewIfNeeded();
+        submitButton.click();
         return new SubmissionModal(page);
     }
 }

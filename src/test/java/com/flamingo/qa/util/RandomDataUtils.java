@@ -36,6 +36,11 @@ public final class RandomDataUtils {
         return (firstName + "." + lastName + randomSuffix() + "@example.com").toLowerCase();
     }
 
+    public static <T extends Enum<T>> T randomEnumValue(Class<T> enumType) {
+        T[] values = enumType.getEnumConstants();
+        return values[ThreadLocalRandom.current().nextInt(values.length)];
+    }
+
     public static LocalDate futureDate(int daysFromNow) {
         return LocalDate.now().plusDays(daysFromNow);
     }

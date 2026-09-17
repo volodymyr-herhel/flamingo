@@ -34,4 +34,9 @@ abstract class BasePage {
     protected Locator byId(String id) {
         return page.locator("#" + id);
     }
+
+    /** Locates elements matching {@code selector} whose text content contains {@code text}. */
+    protected Locator withText(String selector, String text) {
+        return page.locator(selector, new Page.LocatorOptions().setHasText(text));
+    }
 }

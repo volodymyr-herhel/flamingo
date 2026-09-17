@@ -31,9 +31,10 @@ public class PlaywrightExtension implements BeforeEachCallback, AfterEachCallbac
     private static volatile Playwright playwright;
     private static volatile Browser browser;
 
-    // DemoQA serves ad banners/iframes that can overlay and intercept clicks on real page
-    // elements ("<div ...> intercepts pointer events"); block the known ad-serving domains at
-    // the network level so they never render, instead of fighting them with forced clicks.
+    // DemoQA loads third-party ad scripts/iframes that add noticeable network noise and page-load
+    // delay; block the known ad-serving domains so pages settle faster. This does NOT fix ad
+    // slots intercepting clicks - that's handled separately by BasePage.disableAdOverlays(),
+    // since the reserved ad-slot layout div stays in the DOM even when its content is blocked.
     private static final String[] BLOCKED_AD_HOSTS = {
             "doubleclick.net", "googlesyndication.com", "google-analytics.com",
             "googletagservices.com", "adservice.google.com", "mediago.io", "media.net"
