@@ -10,6 +10,12 @@ public final class Config {
             System.getProperty("hygraph.endpoint",
                     "https://us-east-1-shared-usea1-02.cdn.hygraph.com/content/clpvcopq3aavs01usft1idkgj/master");
 
+    public static final String DEMOQA_BASE_URL =
+            System.getProperty("demoqa.baseUrl", "https://demoqa.com");
+
+    public static final boolean PLAYWRIGHT_HEADLESS =
+            Boolean.parseBoolean(System.getProperty("playwright.headless", "true"));
+
     private Config() {
     }
 }

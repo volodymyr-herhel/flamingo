@@ -28,6 +28,14 @@ public final class RandomDataUtils {
         return ThreadLocalRandom.current().nextBoolean();
     }
 
+    public static int randomInt(int minInclusive, int maxExclusive) {
+        return ThreadLocalRandom.current().nextInt(minInclusive, maxExclusive);
+    }
+
+    public static String randomEmail(String firstName, String lastName) {
+        return (firstName + "." + lastName + randomSuffix() + "@example.com").toLowerCase();
+    }
+
     public static LocalDate futureDate(int daysFromNow) {
         return LocalDate.now().plusDays(daysFromNow);
     }
