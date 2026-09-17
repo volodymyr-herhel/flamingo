@@ -21,7 +21,7 @@ class GraphQLNegativeTests {
 
     @Test
     @DisplayName("TC-GQL-N01: Query with an unknown field returns a GraphQL error")
-    void queryWithUnknownField_returnsGraphQLError() {
+    void queryWithUnknownField() {
         Response response = GraphQLClient.execute(GraphQLQueries.UNKNOWN_FIELD_QUERY);
 
         List<Map<String, Object>> errors = response.jsonPath().getList("errors");
@@ -30,7 +30,7 @@ class GraphQLNegativeTests {
 
     @Test
     @DisplayName("TC-GQL-N02: Query with malformed syntax returns a GraphQL syntax error")
-    void queryWithMalformedSyntax_returnsSyntaxError() {
+    void queryWithMalformedSyntax() {
         Response response = GraphQLClient.execute(GraphQLQueries.MALFORMED_SYNTAX_QUERY);
 
         List<Map<String, Object>> errors = response.jsonPath().getList("errors");
@@ -39,7 +39,7 @@ class GraphQLNegativeTests {
 
     @Test
     @DisplayName("TC-GQL-N03: Query a movie with a non-existent id returns null data")
-    void queryMovieWithNonExistentId_returnsNullData() {
+    void queryMovieWithNonExistentId() {
         Response response = GraphQLClient.execute(GraphQLQueries.MOVIE_BY_NON_EXISTENT_ID_QUERY);
 
         response.then().statusCode(200);

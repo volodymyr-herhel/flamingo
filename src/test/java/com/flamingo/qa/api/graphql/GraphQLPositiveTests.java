@@ -21,7 +21,7 @@ class GraphQLPositiveTests {
 
     @Test
     @DisplayName("TC-GQL-001: Query movies returns a list with title and poster")
-    void queryMovies_returnsListWithTitleAndPoster() {
+    void queryMovies() {
         Response response = GraphQLClient.execute(GraphQLQueries.MOVIES_LIST);
 
         response.then().statusCode(200);
@@ -32,7 +32,7 @@ class GraphQLPositiveTests {
 
     @Test
     @DisplayName("TC-GQL-002: Query a single movie by id returns the matching movie")
-    void queryMovieById_returnsMatchingMovie() {
+    void queryMovieById() {
         Response listResponse = GraphQLClient.execute(GraphQLQueries.MOVIES_LIST);
         String firstMovieId = listResponse.jsonPath().getString("data.movies[0].id");
 
@@ -44,7 +44,7 @@ class GraphQLPositiveTests {
 
     @Test
     @DisplayName("TC-GQL-003: Query movies with pagination returns a limited number of results")
-    void queryMoviesWithPagination_returnsLimitedResults() {
+    void queryMoviesWithPagination() {
         Response response = GraphQLClient.execute(GraphQLQueries.MOVIES_WITH_PAGINATION);
 
         response.then().statusCode(200);
@@ -54,7 +54,7 @@ class GraphQLPositiveTests {
 
     @Test
     @DisplayName("TC-GQL-004: Query movies connection returns pagination info")
-    void queryMoviesConnection_returnsPageInfo() {
+    void queryMoviesConnection() {
         Response response = GraphQLClient.execute(GraphQLQueries.MOVIES_CONNECTION);
 
         response.then().statusCode(200);
@@ -65,7 +65,7 @@ class GraphQLPositiveTests {
 
     @Test
     @DisplayName("TC-GQL-005: Query movies ordered by title returns results sorted ascending")
-    void queryMoviesOrderedByTitle_returnsSortedResults() {
+    void queryMoviesOrderedByTitle() {
         Response response = GraphQLClient.execute(GraphQLQueries.MOVIES_ORDERED_BY_TITLE);
 
         response.then().statusCode(200);

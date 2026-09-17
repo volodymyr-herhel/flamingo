@@ -18,7 +18,7 @@ class AuthTests {
 
     @Test
     @DisplayName("TC-AUTH-001: Successful authentication returns a valid token")
-    void createToken_withValidCredentials_returnsToken() {
+    void createTokenWithValidCredentials() {
         AuthRequest request = AuthRequest.builder().username("admin").password("password123").build();
 
         Response response = BookerApiClient.createToken(request);
@@ -29,7 +29,7 @@ class AuthTests {
 
     @Test
     @DisplayName("TC-AUTH-002: Authentication with invalid credentials returns no token")
-    void createToken_withInvalidCredentials_returnsReasonBadCredentials() {
+    void createTokenWithInvalidCredentials() {
         AuthRequest request = AuthRequest.builder().username("admin").password("wrong-password").build();
 
         Response response = BookerApiClient.createToken(request);

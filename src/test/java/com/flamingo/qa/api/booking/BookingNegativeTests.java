@@ -36,7 +36,7 @@ class BookingNegativeTests {
 
     @Test
     @DisplayName("TC-BOOK-N01: Get booking with a non-existent id returns 404")
-    void getBooking_withNonExistentId_returns404() {
+    void getBookingWithNonExistentId() {
         Response response = BookerApiClient.getBooking(NON_EXISTENT_BOOKING_ID);
 
         response.then().statusCode(404);
@@ -44,7 +44,7 @@ class BookingNegativeTests {
 
     @Test
     @DisplayName("TC-BOOK-N02: Update booking without an auth token returns 403")
-    void updateBooking_withoutAuthToken_returns403() {
+    void updateBookingWithoutAuthToken() {
         Response response = BookerApiClient.updateBookingWithoutAuth(existingBookingId, BookingFactory.randomBooking());
 
         response.then().statusCode(403);
@@ -52,7 +52,7 @@ class BookingNegativeTests {
 
     @Test
     @DisplayName("TC-BOOK-N03: Delete booking without an auth token returns 403")
-    void deleteBooking_withoutAuthToken_returns403() {
+    void deleteBookingWithoutAuthToken() {
         Response response = BookerApiClient.deleteBookingWithoutAuth(existingBookingId);
 
         response.then().statusCode(403);
@@ -60,7 +60,7 @@ class BookingNegativeTests {
 
     @Test
     @DisplayName("TC-BOOK-N04: Create booking with a malformed JSON body returns a client error")
-    void createBooking_withMalformedJsonBody_returnsClientError() {
+    void createBookingWithMalformedJsonBody() {
         String malformedJson = "{ \"firstname\": \"John\", \"lastname\": ";
 
         Response response = BookerApiClient.createBookingRaw(malformedJson);

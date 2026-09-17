@@ -15,7 +15,7 @@ class PingTests {
 
     @Test
     @DisplayName("TC-PING-001: Health check endpoint is reachable")
-    void ping_healthCheck_returns201() {
+    void pingHealthCheck() {
         Response response = BookerApiClient.ping();
 
         response.then().statusCode(201);

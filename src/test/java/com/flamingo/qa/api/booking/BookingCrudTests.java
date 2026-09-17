@@ -46,7 +46,7 @@ class BookingCrudTests {
     @Test
     @Order(1)
     @DisplayName("TC-BOOK-001: Create booking with valid data returns the created booking")
-    void createBooking_withValidData_returnsCreatedBooking() {
+    void createBookingWithValidData() {
         Booking booking = BookingFactory.randomBooking();
 
         Response response = BookerApiClient.createBooking(booking);
@@ -60,7 +60,7 @@ class BookingCrudTests {
     @Test
     @Order(2)
     @DisplayName("TC-BOOK-002: Get booking by id returns the matching booking data")
-    void getBooking_withValidId_returnsMatchingBookingData() {
+    void getBookingWithValidId() {
         Response response = BookerApiClient.getBooking(sharedBookingId);
 
         response.then().statusCode(200);
@@ -70,7 +70,7 @@ class BookingCrudTests {
     @Test
     @Order(3)
     @DisplayName("TC-BOOK-006: Get booking ids without filters returns a non-empty list")
-    void getBookingIds_withoutFilters_returnsNonEmptyIdList() {
+    void getBookingIdsWithoutFilters() {
         Response response = BookerApiClient.getBookingIds(null);
 
         response.then().statusCode(200);
@@ -80,7 +80,7 @@ class BookingCrudTests {
     @Test
     @Order(4)
     @DisplayName("TC-BOOK-004: Partial update with a valid token only changes provided fields")
-    void partialUpdateBooking_withValidToken_updatesOnlyProvidedFields() {
+    void partialUpdateBookingWithValidToken() {
         uniqueFirstname = "Flamingo" + System.currentTimeMillis();
 
         Response response = BookerApiClient.partialUpdateBooking(
@@ -96,7 +96,7 @@ class BookingCrudTests {
     @Test
     @Order(5)
     @DisplayName("TC-BOOK-007: Get booking ids filtered by first/last name includes the updated booking")
-    void getBookingIds_filteredByFirstNameAndLastName_returnsCreatedBookingId() {
+    void getBookingIdsFilteredByFirstNameAndLastName() {
         Response response = BookerApiClient.getBookingIds(
                 Map.of("firstname", uniqueFirstname, "lastname", sharedBooking.getLastname()));
 
@@ -107,7 +107,7 @@ class BookingCrudTests {
     @Test
     @Order(6)
     @DisplayName("TC-BOOK-003: Update booking with a valid token updates all fields")
-    void updateBooking_withValidTokenAndData_updatesAllFields() {
+    void updateBookingWithValidTokenAndData() {
         Booking updatedBooking = BookingFactory.randomBooking();
 
         Response response = BookerApiClient.updateBooking(sharedBookingId, updatedBooking, AuthSession.getToken());
@@ -119,7 +119,7 @@ class BookingCrudTests {
     @Test
     @Order(7)
     @DisplayName("TC-BOOK-005: Delete booking with a valid token removes the booking")
-    void deleteBooking_withValidToken_removesBooking() {
+    void deleteBookingWithValidToken() {
         Response deleteResponse = BookerApiClient.deleteBooking(sharedBookingId, AuthSession.getToken());
         deleteResponse.then().statusCode(201);
 
