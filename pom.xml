@@ -157,6 +157,9 @@
                 <configuration>
                     <groups>${groups}</groups>
                     <argLine>${argLine}</argLine>
+                    <!-- reruns an individually failing test method up to 2x before failing the build,
+                         cushioning transient network/UI flakiness (e.g. demoqa.com/Restful Booker hiccups) -->
+                    <rerunFailingTestsCount>2</rerunFailingTestsCount>
                     <systemPropertyVariables>
                         <junit.jupiter.extensions.autodetection.enabled>true</junit.jupiter.extensions.autodetection.enabled>
                     </systemPropertyVariables>

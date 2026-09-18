@@ -15,9 +15,14 @@ public class RegistrationFormModal extends BasePage {
     private final Locator salaryInput = byId("salary");
     private final Locator departmentInput = byId("department");
     private final Locator submitButton = byId("submit");
+    private final Locator modalContainer = byId("registration-form-modal");
 
     public RegistrationFormModal(Page page) {
         super(page);
+    }
+
+    public boolean isVisible() {
+        return modalContainer.isVisible();
     }
 
     @Step("Fill registration form")
@@ -32,7 +37,8 @@ public class RegistrationFormModal extends BasePage {
     }
 
     @Step("Submit registration form")
-    public void submit() {
+    public RegistrationFormModal submit() {
         submitButton.click();
+        return this;
     }
 }

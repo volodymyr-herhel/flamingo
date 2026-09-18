@@ -12,10 +12,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.nio.file.Path;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.function.BiConsumer;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -61,5 +66,26 @@ class PracticeFormTests {
         SubmissionModal modal = new PracticeFormPage(page).open().submit();
 
         assertThat(modal.isVisible()).isFalse();
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("invalidFieldScenarios")
+    void submitFormWithInvalidFieldShowsNoSuccessModal(String scenario, BiConsumer<StudentDetails, String> mutator,
+                                                        String invalidValue, Page page) {
+        StudentDetails student = StudentDetailsFactory.randomStudent();
+        mutator.accept(student, invalidValue);
+
+        SubmissionModal modal = new PracticeFormPage(page).open().fillStudentDetails(student).submit();
+
+        assertThat(modal.isVisible()).isFalse();
+    }
+
+    private static Stream<Arguments> invalidFieldScenarios() {
+        return Stream.of(
+                Arguments.of("TC-UI-FORM-N02: Submitting the form with an invalid email format shows no success modal",
+                        (BiConsumer<StudentDetails, String>) StudentDetails::setEmail, "not-an-email"),
+                Arguments.of("TC-UI-FORM-N03: Submitting the form with an invalid mobile number shows no success modal",
+                        (BiConsumer<StudentDetails, String>) StudentDetails::setMobileNumber, "123")
+        );
     }
 }

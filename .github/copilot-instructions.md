@@ -52,6 +52,12 @@ commands and [docs/API_TEST_CASES.md](../docs/API_TEST_CASES.md) /
   that doesn't exist on the live site.
 - Negative tests asserting undocumented error codes should assert a status *range* (e.g. 4xx)
   rather than one exact code.
+- Test classes run in parallel (`src/test/resources/junit-platform.properties`) and a failing
+  test auto-reruns up to 2x (Surefire `rerunFailingTestsCount`) before failing the build. Keep
+  new tests independent (own data, own cleanup, no shared mutable state) so they stay safe to
+  parallelize. Note: with parallel classes on, the console/`.txt` per-class "Tests run" counts can
+  be misattributed between classes (known Surefire cosmetic quirk) - trust `surefire-reports/*.xml`
+  or the Allure report instead.
 
 ## Build and Test
 

@@ -7,6 +7,8 @@ implementation. All manual test cases below are automated (status `Automated`).
 
 - **TC-UI-FORM-001** → `com.flamingo.qa.ui.form.PracticeFormTests#submitFullyFilledFormShowsMatchingSummary` — Automated
 - **TC-UI-FORM-N01** → `com.flamingo.qa.ui.form.PracticeFormTests#submitEmptyFormShowsNoSuccessModal` — Automated
+- **TC-UI-FORM-N02** → `com.flamingo.qa.ui.form.PracticeFormTests#submitFormWithInvalidFieldShowsNoSuccessModal` (parameterized, "invalid email" case) — Automated
+- **TC-UI-FORM-N03** → `com.flamingo.qa.ui.form.PracticeFormTests#submitFormWithInvalidFieldShowsNoSuccessModal` (parameterized, "invalid mobile number" case) — Automated
 
 ## Web Tables
 
@@ -15,5 +17,7 @@ implementation. All manual test cases below are automated (status `Automated`).
 - **TC-UI-TABLE-003** → `com.flamingo.qa.ui.webtables.WebTablesTests#deleteRecordRemovesItFromTable` — Automated
 - **TC-UI-TABLE-004** → `com.flamingo.qa.ui.webtables.WebTablesTests#searchFiltersTableToMatchingRecords` — Automated
 - **TC-UI-TABLE-N01** → `com.flamingo.qa.ui.webtables.WebTablesTests#clickingColumnHeaderDoesNotReorderRows` — Automated
+- **TC-UI-TABLE-N02** → `com.flamingo.qa.ui.webtables.WebTablesTests#addRecordWithInvalidEmailIsRejected` — Automated
+- **TC-UI-TABLE-N03** → `com.flamingo.qa.ui.webtables.WebTablesTests#addRecordWithMissingRequiredFieldIsRejected` — Automated
 
-**Coverage summary:** 7 manual test cases, 7 automated (100%).
+**Coverage summary:** 11 manual test cases, 11 automated (100%).

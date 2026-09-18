@@ -2,6 +2,7 @@ package com.flamingo.qa.ui.webtables;
 
 import com.flamingo.qa.factory.PersonRecordFactory;
 import com.flamingo.qa.model.ui.PersonRecord;
+import com.flamingo.qa.ui.pages.RegistrationFormModal;
 import com.flamingo.qa.ui.pages.WebTablesPage;
 import com.flamingo.qa.ui.support.PlaywrightExtension;
 import com.microsoft.playwright.Page;
@@ -49,10 +50,7 @@ class WebTablesTests {
     @Tag("smoke")
     @DisplayName("TC-UI-TABLE-001: Adding a new record shows it in the table")
     void addNewRecordShowsItInTable(Page page) {
-        PersonRecord person = PersonRecordFactory.randomPerson();
-        webTables = new WebTablesPage(page).open();
-
-        webTables.clickAdd().fill(person).submit();
+        PersonRecord person = addNewRecord(page);
         createdEmails.add(person.getEmail());
 
         assertThat(webTables.isRecordPresent(person.getEmail())).isTrue();
@@ -61,9 +59,7 @@ class WebTablesTests {
     @Test
     @DisplayName("TC-UI-TABLE-002: Editing an existing record updates its values in the table")
     void editRecordUpdatesItsValues(Page page) {
-        PersonRecord person = PersonRecordFactory.randomPerson();
-        webTables = new WebTablesPage(page).open();
-        webTables.clickAdd().fill(person).submit();
+        PersonRecord person = addNewRecord(page);
 
         PersonRecord updated = person.toBuilder().department("Engineering").build();
         webTables.clickEdit(person.getEmail()).fill(updated).submit();
@@ -75,9 +71,7 @@ class WebTablesTests {
     @Test
     @DisplayName("TC-UI-TABLE-003: Deleting a record removes it from the table")
     void deleteRecordRemovesItFromTable(Page page) {
-        PersonRecord person = PersonRecordFactory.randomPerson();
-        webTables = new WebTablesPage(page).open();
-        webTables.clickAdd().fill(person).submit();
+        PersonRecord person = addNewRecord(page);
         assertThat(webTables.isRecordPresent(person.getEmail())).isTrue();
 
         webTables.delete(person.getEmail());
@@ -88,9 +82,7 @@ class WebTablesTests {
     @Test
     @DisplayName("TC-UI-TABLE-004: Searching filters the table to only matching records")
     void searchFiltersTableToMatchingRecords(Page page) {
-        PersonRecord person = PersonRecordFactory.randomPerson();
-        webTables = new WebTablesPage(page).open();
-        webTables.clickAdd().fill(person).submit();
+        PersonRecord person = addNewRecord(page);
         createdEmails.add(person.getEmail());
 
         webTables.search(person.getEmail());
@@ -107,5 +99,44 @@ class WebTablesTests {
         webTables.clickColumnHeader("First Name");
 
         assertThat(webTables.visibleFirstNames()).isEqualTo(originalOrder);
+    }
+
+    @Test
+    @DisplayName("TC-UI-TABLE-N02: Adding a record with an invalid email format does not add it to the table")
+    void addRecordWithInvalidEmailIsRejected(Page page) {
+        PersonRecord person = PersonRecordFactory.randomPerson().toBuilder().email("not-an-email").build();
+
+        RegistrationFormModal modal = attemptAddRecord(page, person);
+
+        assertRecordRejected(modal, person);
+    }
+
+    @Test
+    @DisplayName("TC-UI-TABLE-N03: Adding a record with a required field left blank does not add it to the table")
+    void addRecordWithMissingRequiredFieldIsRejected(Page page) {
+        PersonRecord person = PersonRecordFactory.randomPerson().toBuilder().firstName("").build();
+
+        RegistrationFormModal modal = attemptAddRecord(page, person);
+
+        assertRecordRejected(modal, person);
+    }
+
+    /** Creates a random record, opens Web Tables, and adds it via the Add Record modal. */
+    private PersonRecord addNewRecord(Page page) {
+        PersonRecord person = PersonRecordFactory.randomPerson();
+        attemptAddRecord(page, person);
+        return person;
+    }
+
+    /** Opens Web Tables and submits the Add Record modal with the given (possibly invalid) data. */
+    private RegistrationFormModal attemptAddRecord(Page page, PersonRecord person) {
+        webTables = new WebTablesPage(page).open();
+        return webTables.clickAdd().fill(person).submit();
+    }
+
+    /** Asserts a rejected Add Record submission: modal stayed open, no row was added. */
+    private void assertRecordRejected(RegistrationFormModal modal, PersonRecord person) {
+        assertThat(modal.isVisible()).isTrue();
+        assertThat(webTables.isRecordPresent(person.getLastName())).isFalse();
     }
 }

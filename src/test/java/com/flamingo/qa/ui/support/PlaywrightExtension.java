@@ -20,16 +20,18 @@ import java.util.Arrays;
 import java.util.Optional;
 
 /**
- * Manages the Playwright browser lifecycle for UI tests: one {@link Browser} shared for the
- * whole run (like {@code AuthSession} does for the API token), a fresh {@link BrowserContext}/
- * {@link Page} per test method for isolation, and a screenshot attached to Allure whenever a
- * test fails. Inject a {@link Page} by adding it as a test method parameter.
+ * Manages the Playwright browser lifecycle for UI tests: one {@link Browser} per worker thread
+ * (Playwright's Java API is not thread-safe - a Browser/Page must only be used from the thread
+ * that created it, so JUnit 5 parallel execution needs one instance per thread rather than a
+ * single shared instance), a fresh {@link BrowserContext}/{@link Page} per test method for
+ * isolation, and a screenshot attached to Allure whenever a test fails. Inject a {@link Page} by
+ * adding it as a test method parameter.
  */
 public class PlaywrightExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver, TestWatcher {
 
     private static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(PlaywrightExtension.class);
-    private static volatile Playwright playwright;
-    private static volatile Browser browser;
+    private static final ThreadLocal<Playwright> PLAYWRIGHT = ThreadLocal.withInitial(Playwright::create);
+    private static final ThreadLocal<Browser> BROWSER = ThreadLocal.withInitial(PlaywrightExtension::launchBrowser);
 
     // DemoQA loads third-party ad scripts/iframes that add noticeable network noise and page-load
     // delay; block the known ad-serving domains so pages settle faster. This does NOT fix ad
@@ -89,19 +91,17 @@ public class PlaywrightExtension implements BeforeEachCallback, AfterEachCallbac
     }
 
     private static Browser getBrowser() {
-        if (browser == null) {
-            synchronized (PlaywrightExtension.class) {
-                if (browser == null) {
-                    playwright = Playwright.create();
-                    browser = playwright.chromium().launch(
-                            new BrowserType.LaunchOptions().setHeadless(Config.PLAYWRIGHT_HEADLESS));
-                    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                        browser.close();
-                        playwright.close();
-                    }));
-                }
-            }
-        }
+        return BROWSER.get();
+    }
+
+    /** Runs on whichever worker thread first needs a browser; the resulting Browser/Playwright pair is only ever touched by that thread again. */
+    private static Browser launchBrowser() {
+        Playwright pw = PLAYWRIGHT.get();
+        Browser browser = pw.chromium().launch(new BrowserType.LaunchOptions().setHeadless(Config.PLAYWRIGHT_HEADLESS));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            browser.close();
+            pw.close();
+        }));
         return browser;
     }
 }

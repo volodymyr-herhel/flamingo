@@ -8,9 +8,13 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,24 +23,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Feature("Video schema - negative queries")
 class GraphQLNegativeTests {
 
-    @Test
-    @DisplayName("TC-GQL-N01: Query with an unknown field returns a GraphQL error")
-    void queryWithUnknownField() {
-        Response response = GraphQLClient.execute(GraphQLQueries.UNKNOWN_FIELD_QUERY);
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("invalidQueries")
+    void invalidQueryReturnsGraphQLError(String scenario, String query) {
+        Response response = GraphQLClient.execute(query);
 
         response.then().statusCode(400);
         List<Map<String, Object>> errors = response.jsonPath().getList("errors");
         assertThat(errors).isNotEmpty();
     }
 
-    @Test
-    @DisplayName("TC-GQL-N02: Query with malformed syntax returns a GraphQL syntax error")
-    void queryWithMalformedSyntax() {
-        Response response = GraphQLClient.execute(GraphQLQueries.MALFORMED_SYNTAX_QUERY);
-
-        response.then().statusCode(400);
-        List<Map<String, Object>> errors = response.jsonPath().getList("errors");
-        assertThat(errors).isNotEmpty();
+    private static Stream<Arguments> invalidQueries() {
+        return Stream.of(
+                Arguments.of("TC-GQL-N01: Query with an unknown field returns a GraphQL error",
+                        GraphQLQueries.UNKNOWN_FIELD_QUERY),
+                Arguments.of("TC-GQL-N02: Query with malformed syntax returns a GraphQL syntax error",
+                        GraphQLQueries.MALFORMED_SYNTAX_QUERY)
+        );
     }
 
     @Test

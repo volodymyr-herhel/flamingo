@@ -8,6 +8,12 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,33 +37,40 @@ class BookingNegativeTests extends BookingTestSupport {
         response.then().statusCode(404);
     }
 
-    @Test
-    @DisplayName("TC-BOOK-N02: Update booking without an auth token returns 403")
-    void updateBookingWithoutAuthToken() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("unauthenticatedRequests")
+    void unauthenticatedRequestReturns403(String scenario, Function<Integer, Response> request) {
         createBooking(BookingFactory.randomBooking());
 
-        Response response = BookerApiClient.updateBookingWithoutAuth(bookingId, BookingFactory.randomBooking());
+        Response response = request.apply(bookingId);
 
         response.then().statusCode(403);
     }
 
-    @Test
-    @DisplayName("TC-BOOK-N03: Delete booking without an auth token returns 403")
-    void deleteBookingWithoutAuthToken() {
-        createBooking(BookingFactory.randomBooking());
-
-        Response response = BookerApiClient.deleteBookingWithoutAuth(bookingId);
-
-        response.then().statusCode(403);
+    private static Stream<Arguments> unauthenticatedRequests() {
+        return Stream.of(
+                Arguments.of("TC-BOOK-N02: Update booking without an auth token returns 403",
+                        (Function<Integer, Response>) id ->
+                                BookerApiClient.updateBookingWithoutAuth(id, BookingFactory.randomBooking())),
+                Arguments.of("TC-BOOK-N03: Delete booking without an auth token returns 403",
+                        (Function<Integer, Response>) BookerApiClient::deleteBookingWithoutAuth)
+        );
     }
 
-    @Test
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("malformedJsonBodies")
     @DisplayName("TC-BOOK-N04: Create booking with a malformed JSON body returns a client error")
-    void createBookingWithMalformedJsonBody() {
-        String malformedJson = "{ \"firstname\": \"John\", \"lastname\": ";
-
+    void createBookingWithMalformedJsonBody(String scenario, String malformedJson) {
         Response response = BookerApiClient.createBookingRaw(malformedJson);
 
         assertThat(response.statusCode()).isBetween(400, 499);
+    }
+
+    private static Stream<Arguments> malformedJsonBodies() {
+        return Stream.of(
+                Arguments.of("truncated object", "{ \"firstname\": \"John\", \"lastname\": "),
+                Arguments.of("trailing comma", "{ \"firstname\": \"John\", \"lastname\": \"Doe\", }"),
+                Arguments.of("unquoted key", "{ firstname: \"John\" }")
+        );
     }
 }

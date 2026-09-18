@@ -27,8 +27,8 @@ All manual test cases below are automated (status `Automated`).
 ## Booking Negative Scenarios
 
 - **TC-BOOK-N01** → `com.flamingo.qa.api.booking.BookingNegativeTests#getBookingWithNonExistentId` — Automated
-- **TC-BOOK-N02** → `com.flamingo.qa.api.booking.BookingNegativeTests#updateBookingWithoutAuthToken` — Automated
-- **TC-BOOK-N03** → `com.flamingo.qa.api.booking.BookingNegativeTests#deleteBookingWithoutAuthToken` — Automated
+- **TC-BOOK-N02** → `com.flamingo.qa.api.booking.BookingNegativeTests#unauthenticatedRequestReturns403` (parameterized, "update" case) — Automated
+- **TC-BOOK-N03** → `com.flamingo.qa.api.booking.BookingNegativeTests#unauthenticatedRequestReturns403` (parameterized, "delete" case) — Automated
 - **TC-BOOK-N04** → `com.flamingo.qa.api.booking.BookingNegativeTests#createBookingWithMalformedJsonBody` — Automated
 
 ## GraphQL (positive)
@@ -41,8 +41,8 @@ All manual test cases below are automated (status `Automated`).
 
 ## GraphQL (negative)
 
-- **TC-GQL-N01** → `com.flamingo.qa.api.graphql.GraphQLNegativeTests#queryWithUnknownField` — Automated
-- **TC-GQL-N02** → `com.flamingo.qa.api.graphql.GraphQLNegativeTests#queryWithMalformedSyntax` — Automated
+- **TC-GQL-N01** → `com.flamingo.qa.api.graphql.GraphQLNegativeTests#invalidQueryReturnsGraphQLError` (parameterized, "unknown field" case) — Automated
+- **TC-GQL-N02** → `com.flamingo.qa.api.graphql.GraphQLNegativeTests#invalidQueryReturnsGraphQLError` (parameterized, "malformed syntax" case) — Automated
 - **TC-GQL-N03** → `com.flamingo.qa.api.graphql.GraphQLNegativeTests#queryMovieWithNonExistentId` — Automated
 
 **Coverage summary:** 24 manual test cases, 24 automated (100%). Booking CRUD (9) exceeds the

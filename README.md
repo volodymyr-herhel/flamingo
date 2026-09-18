@@ -100,10 +100,28 @@ docs/
 - **Positive + negative coverage**: every feature has both a happy-path suite and a dedicated
   negative-scenario suite (invalid auth, non-existent ids, malformed payloads, GraphQL errors,
   empty UI form submission).
+- **Data-driven tests**: scenarios that repeat the same assertion logic across multiple inputs
+  use JUnit 5 `@ParameterizedTest` + `@MethodSource` instead of near-duplicate test methods -
+  malformed booking JSON payload variants (`BookingNegativeTests`), invalid GraphQL queries
+  (`GraphQLNegativeTests`), and invalid Practice Form field values (`PracticeFormTests`). Each
+  parameterized case still carries its own `TC-<ID>` in the invocation display name
+  (`@ParameterizedTest(name = "{0}")`), so traceability to the manual test catalog is preserved.
 - **Reporting**: Allure annotations (`@Epic`/`@Feature`/`@Step`) and descriptive `@DisplayName`s
   (carrying the manual TC id) make the Allure report self-explanatory and traceable back to the
   manual test case docs. Failed UI tests automatically attach a full-page screenshot to Allure
   via `PlaywrightExtension` (a JUnit 5 `TestWatcher`).
+- **Parallel execution**: `src/test/resources/junit-platform.properties` runs test classes
+  concurrently (JUnit 5 parallel execution, dynamic thread pool). Every API test creates/cleans
+  its own data and every UI test gets its own Playwright `BrowserContext`/`Page`
+  (`PlaywrightExtension` uses a `ThreadLocal` `Browser` per worker thread, since Playwright's Java
+  API isn't thread-safe), so tests stay independent under parallelism. Note: with parallel
+  classes enabled, Maven's live console/`.txt` per-class "Tests run" counts can be misattributed
+  between concurrently-running classes (a known Surefire/JUnit5 cosmetic limitation) - the build
+  result, the per-test `surefire-reports/*.xml`, and the Allure report are unaffected and accurate.
+- **Retry logic**: the Surefire plugin reruns an individually failing test up to 2 times
+  (`rerunFailingTestsCount`) before failing the build, cushioning transient network/UI flakiness,
+  in addition to `RequestRetrySupport`'s exponential-backoff retry for Restful Booker's
+  `418`/`429` responses specifically.
 
 ## Challenges & Solutions
 
@@ -139,9 +157,6 @@ docs/
 
 ## What I Would Add With More Time
 
-- Data-driven tests via JUnit 5 `@ParameterizedTest` + `@MethodSource`/CSV sources for booking
-  and student-form field variations.
-- Parallel test execution (JUnit 5 `junit-platform.properties` parallel execution).
 - A dedicated `docs/architecture.md` describing the client/factory/model/page-object layering in
   more depth.
 - Cross-browser UI runs (Firefox/WebKit via Playwright) in addition to Chromium.

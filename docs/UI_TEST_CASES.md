@@ -28,6 +28,20 @@ Scope:
 - **Steps:** Click Submit without filling any field
 - **Expected:** No success modal appears (native required-field validation blocks submission)
 
+### TC-UI-FORM-N02: Submit the form with an invalid email format
+- **Pre:** Practice form page is open
+- **Steps:** Fill all fields with valid data except enter an invalid email format (e.g.
+  "not-an-email"), then Submit
+- **Expected:** No success modal appears (email pattern validation blocks submission) - verified
+  manually that this holds even when every other field is valid
+
+### TC-UI-FORM-N03: Submit the form with an invalid mobile number
+- **Pre:** Practice form page is open
+- **Steps:** Fill all fields with valid data except enter a mobile number shorter than 10 digits
+  (e.g. "123"), then Submit
+- **Expected:** No success modal appears (mobile number pattern validation blocks submission) -
+  verified manually that this holds even when every other field is valid
+
 ## Web Tables
 
 ### TC-UI-TABLE-001: Add a new record
@@ -56,3 +70,16 @@ Scope:
 - **Expected:** Row order is unchanged (this DemoQA build has no working column sort — verified
   manually; this test documents the current, known behavior rather than assuming the sort
   feature works)
+
+### TC-UI-TABLE-N02: Add a record with an invalid email format
+- **Pre:** Web Tables page is open
+- **Steps:** Click Add, fill the registration form with valid data except an invalid email
+  format (e.g. "not-an-email"), submit
+- **Expected:** The Registration Form modal stays open (submission is blocked) and no new row is
+  added to the table - verified manually
+
+### TC-UI-TABLE-N03: Add a record with a required field left blank
+- **Pre:** Web Tables page is open
+- **Steps:** Click Add, fill the registration form leaving First Name blank, submit
+- **Expected:** The Registration Form modal stays open (submission is blocked) and no new row is
+  added to the table - verified manually
