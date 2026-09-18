@@ -35,6 +35,8 @@ mvn test -Dgroups="smoke"
 
 # Run UI tests headed (visible browser) instead of the default headless
 mvn test -Dgroups="ui" -Dplaywright.headless=false
+# PowerShell note: quote each -D argument separately, or it can be mis-parsed as a lifecycle phase:
+# mvn test '-Dgroups=ui' '-Dplaywright.headless=false'
 
 # Generate the Allure report
 mvn allure:report
