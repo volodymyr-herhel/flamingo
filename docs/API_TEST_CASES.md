@@ -8,16 +8,6 @@ Scope:
 - Restful Booker REST API (`https://restful-booker.herokuapp.com`)
 - Hygraph GraphQL API — "Video Streaming" example schema
 
-# Manual Test Cases
-
-Manual test case catalog for the Flamingo QA Automation Assignment. These test cases were
-designed first (test design phase) and every one of them has since been automated — see
-[API_TRACEABILITY.md](API_TRACEABILITY.md) for the mapping to the automated test classes/methods.
-
-Scope:
-- Restful Booker REST API (`https://restful-booker.herokuapp.com`)
-- Hygraph GraphQL API — "Video Streaming" example schema
-
 ## Authentication
 
 ### TC-AUTH-001: Successful authentication returns a token
